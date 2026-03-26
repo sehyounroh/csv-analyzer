@@ -9,8 +9,8 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #0f1117;
-      color: #e2e8f0;
+      background: #f1f5f9;
+      color: #1e293b;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       min-height: 100vh;
       padding: 32px 24px;
@@ -23,7 +23,7 @@
     header h1 {
       font-size: 1.6rem;
       font-weight: 700;
-      color: #f1f5f9;
+      color: #0f172a;
       letter-spacing: -0.02em;
     }
 
@@ -42,12 +42,13 @@
     }
 
     .card {
-      background: #1e2130;
-      border: 1px solid #2a2f45;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 12px;
       padding: 22px 24px;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
 
     .card::before {
@@ -57,9 +58,9 @@
       height: 3px;
     }
 
-    .card.goal::before  { background: #6366f1; }
-    .card.actual::before { background: #22d3ee; }
-    .card.rate::before  { background: #10b981; }
+    .card.goal::before   { background: #6366f1; }
+    .card.actual::before { background: #0ea5e9; }
+    .card.rate::before   { background: #10b981; }
 
     .card .label {
       font-size: 0.75rem;
@@ -76,28 +77,29 @@
       margin-bottom: 6px;
     }
 
-    .card.goal   .value { color: #818cf8; }
-    .card.actual .value { color: #22d3ee; }
+    .card.goal   .value { color: #6366f1; }
+    .card.actual .value { color: #0ea5e9; }
     .card.rate   .value { color: #10b981; }
 
     .card .sub {
       font-size: 0.78rem;
-      color: #64748b;
+      color: #94a3b8;
     }
 
     /* Charts */
     .chart-section {
-      background: #1e2130;
-      border: 1px solid #2a2f45;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 12px;
       padding: 24px;
       margin-bottom: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
 
     .chart-section h2 {
       font-size: 0.9rem;
       font-weight: 600;
-      color: #94a3b8;
+      color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.06em;
       margin-bottom: 20px;
@@ -120,11 +122,12 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: #1e2130;
-      border: 1px solid #2a2f45;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 999px;
       padding: 8px 16px;
       font-size: 0.82rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .badge .dot {
@@ -133,13 +136,13 @@
       flex-shrink: 0;
     }
 
-    .badge.best  { border-color: rgba(16,185,129,0.4); }
-    .badge.worst { border-color: rgba(239,68,68,0.4); }
-    .badge.best  .dot { background: #10b981; box-shadow: 0 0 6px #10b981; }
-    .badge.worst .dot { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+    .badge.best  { border-color: rgba(16,185,129,0.35); }
+    .badge.worst { border-color: rgba(239,68,68,0.35); }
+    .badge.best  .dot { background: #10b981; }
+    .badge.worst .dot { background: #ef4444; }
 
-    .badge .badge-label { color: #64748b; }
-    .badge .badge-month { color: #f1f5f9; font-weight: 600; }
+    .badge .badge-label { color: #94a3b8; }
+    .badge .badge-month { color: #1e293b; font-weight: 600; }
     .badge .badge-rate  { font-weight: 700; }
     .badge.best  .badge-rate { color: #10b981; }
     .badge.worst .badge-rate { color: #ef4444; }
@@ -223,15 +226,15 @@
       </div>
     `;
 
-    Chart.defaults.color = '#94a3b8';
-    Chart.defaults.borderColor = '#2a2f45';
+    Chart.defaults.color = '#64748b';
+    Chart.defaults.borderColor = '#e2e8f0';
 
     const tooltipBase = {
-      backgroundColor: '#16192a',
-      borderColor: '#2a2f45',
+      backgroundColor: '#ffffff',
+      borderColor: '#e2e8f0',
       borderWidth: 1,
-      titleColor: '#f1f5f9',
-      bodyColor: '#94a3b8',
+      titleColor: '#0f172a',
+      bodyColor: '#475569',
       padding: 12,
       cornerRadius: 8,
       boxPadding: 4
@@ -278,12 +281,11 @@
         plugins: {
           legend: {
             labels: {
-              color: '#94a3b8', font: { size: 12 }, padding: 20, usePointStyle: true,
+              color: '#64748b', font: { size: 12 }, padding: 20, usePointStyle: true,
               generateLabels: chart => {
                 const base = Chart.defaults.plugins.legend.labels.generateLabels(chart);
-                // 실적 범례 색을 중립 색으로 고정
-                base[1].fillStyle = 'rgba(148,163,184,0.5)';
-                base[1].strokeStyle = '#94a3b8';
+                base[1].fillStyle = 'rgba(100,116,139,0.35)';
+                base[1].strokeStyle = '#64748b';
                 return base;
               }
             }
@@ -310,10 +312,10 @@
           }
         },
         scales: {
-          x: { grid: { color: '#1e2540' }, ticks: { color: '#64748b' } },
+          x: { grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8' } },
           y: {
-            grid: { color: '#1e2540' },
-            ticks: { color: '#64748b', callback: v => v.toLocaleString() }
+            grid: { color: '#f1f5f9' },
+            ticks: { color: '#94a3b8', callback: v => v.toLocaleString() }
           }
         }
       }
@@ -328,13 +330,13 @@
           {
             label: '달성률',
             data: rates,
-            borderColor: '#818cf8',
-            backgroundColor: 'rgba(129,140,248,0.1)',
+            borderColor: '#6366f1',
+            backgroundColor: 'rgba(99,102,241,0.08)',
             borderWidth: 2.5,
             pointRadius: 6,
             pointHoverRadius: 8,
             pointBackgroundColor: rates.map(r => r >= 100 ? '#10b981' : '#ef4444'),
-            pointBorderColor: '#0f1117',
+            pointBorderColor: '#ffffff',
             pointBorderWidth: 2,
             fill: true,
             tension: 0.35
@@ -342,7 +344,7 @@
           {
             label: '목표선 (100%)',
             data: Array(12).fill(100),
-            borderColor: '#374151',
+            borderColor: '#cbd5e1',
             borderWidth: 1.5,
             borderDash: [6, 4],
             pointRadius: 0,
@@ -356,7 +358,7 @@
         interaction: { mode: 'index', intersect: false },
         plugins: {
           legend: {
-            labels: { color: '#94a3b8', font: { size: 12 }, padding: 20, usePointStyle: true }
+            labels: { color: '#64748b', font: { size: 12 }, padding: 20, usePointStyle: true }
           },
           tooltip: {
             ...tooltipBase,
@@ -382,10 +384,10 @@
           }
         },
         scales: {
-          x: { grid: { color: '#1e2540' }, ticks: { color: '#64748b' } },
+          x: { grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8' } },
           y: {
-            grid: { color: '#1e2540' },
-            ticks: { color: '#64748b', callback: v => v + '%' }
+            grid: { color: '#f1f5f9' },
+            ticks: { color: '#94a3b8', callback: v => v + '%' }
           }
         }
       }
