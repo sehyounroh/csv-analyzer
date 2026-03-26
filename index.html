@@ -108,6 +108,42 @@
       height: 300px;
     }
 
+    /* Badges */
+    .badges {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #1e2130;
+      border: 1px solid #2a2f45;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 0.82rem;
+    }
+
+    .badge .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge.best  { border-color: rgba(16,185,129,0.4); }
+    .badge.worst { border-color: rgba(239,68,68,0.4); }
+    .badge.best  .dot { background: #10b981; box-shadow: 0 0 6px #10b981; }
+    .badge.worst .dot { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+
+    .badge .badge-label { color: #64748b; }
+    .badge .badge-month { color: #f1f5f9; font-weight: 600; }
+    .badge .badge-rate  { font-weight: 700; }
+    .badge.best  .badge-rate { color: #10b981; }
+    .badge.worst .badge-rate { color: #ef4444; }
+
     @media (max-width: 640px) {
       .cards { grid-template-columns: 1fr; }
       .card .value { font-size: 1.6rem; }
@@ -120,6 +156,8 @@
     <h1>영업팀 실적 대시보드</h1>
     <p>2024년 연간 목표 vs 실적 현황</p>
   </header>
+
+  <div class="badges" id="badges"></div>
 
   <div class="cards">
     <div class="card goal">
@@ -167,33 +205,45 @@
     document.getElementById('totalActual').textContent = totalActual.toLocaleString();
     document.getElementById('achieveRate').textContent = totalRate + '%';
 
+    // Best / Worst badges
+    const bestIdx  = rates.indexOf(Math.max(...rates));
+    const worstIdx = rates.indexOf(Math.min(...rates));
+    document.getElementById('badges').innerHTML = `
+      <div class="badge best">
+        <span class="dot"></span>
+        <span class="badge-label">최고 달성월</span>
+        <span class="badge-month">${months[bestIdx]}</span>
+        <span class="badge-rate">${rates[bestIdx]}%</span>
+      </div>
+      <div class="badge worst">
+        <span class="dot"></span>
+        <span class="badge-label">최저 달성월</span>
+        <span class="badge-month">${months[worstIdx]}</span>
+        <span class="badge-rate">${rates[worstIdx]}%</span>
+      </div>
+    `;
+
     Chart.defaults.color = '#94a3b8';
     Chart.defaults.borderColor = '#2a2f45';
 
-    const commonOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          labels: { color: '#94a3b8', font: { size: 12 }, padding: 20, usePointStyle: true }
-        },
-        tooltip: {
-          backgroundColor: '#16192a',
-          borderColor: '#2a2f45',
-          borderWidth: 1,
-          titleColor: '#f1f5f9',
-          bodyColor: '#94a3b8',
-          padding: 12,
-          cornerRadius: 8
-        }
-      },
-      scales: {
-        x: { grid: { color: '#1e2540' }, ticks: { color: '#64748b' } },
-        y: { grid: { color: '#1e2540' }, ticks: { color: '#64748b' } }
-      }
+    const tooltipBase = {
+      backgroundColor: '#16192a',
+      borderColor: '#2a2f45',
+      borderWidth: 1,
+      titleColor: '#f1f5f9',
+      bodyColor: '#94a3b8',
+      padding: 12,
+      cornerRadius: 8,
+      boxPadding: 4
     };
 
-    // Bar Chart
+    // Bar Chart — 실적 막대 색: 달성 초록 / 미달 빨강
+    const barColors = actuals.map((a, i) =>
+      a >= goals[i]
+        ? { bg: 'rgba(16,185,129,0.55)',  border: '#10b981' }
+        : { bg: 'rgba(239,68,68,0.55)',   border: '#ef4444' }
+    );
+
     new Chart(document.getElementById('barChart'), {
       type: 'bar',
       data: {
@@ -202,42 +252,68 @@
           {
             label: '목표',
             data: goals,
-            backgroundColor: 'rgba(99,102,241,0.55)',
+            backgroundColor: 'rgba(99,102,241,0.45)',
             borderColor: '#6366f1',
             borderWidth: 1.5,
             borderRadius: 4,
-            borderSkipped: false
+            borderSkipped: false,
+            order: 2
           },
           {
             label: '실적',
             data: actuals,
-            backgroundColor: 'rgba(34,211,238,0.55)',
-            borderColor: '#22d3ee',
+            backgroundColor: barColors.map(c => c.bg),
+            borderColor: barColors.map(c => c.border),
             borderWidth: 1.5,
             borderRadius: 4,
-            borderSkipped: false
+            borderSkipped: false,
+            order: 1
           }
         ]
       },
       options: {
-        ...commonOptions,
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
         plugins: {
-          ...commonOptions.plugins,
+          legend: {
+            labels: {
+              color: '#94a3b8', font: { size: 12 }, padding: 20, usePointStyle: true,
+              generateLabels: chart => {
+                const base = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                // 실적 범례 색을 중립 색으로 고정
+                base[1].fillStyle = 'rgba(148,163,184,0.5)';
+                base[1].strokeStyle = '#94a3b8';
+                return base;
+              }
+            }
+          },
           tooltip: {
-            ...commonOptions.plugins.tooltip,
+            ...tooltipBase,
             callbacks: {
-              label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()} 만원`
+              title: ctx => ctx[0].label,
+              beforeBody: ctx => {
+                const i = ctx[0].dataIndex;
+                return `달성률: ${rates[i]}%  ${rates[i] >= 100 ? '✅' : '❌'}`;
+              },
+              label: ctx => {
+                const label = ctx.dataset.label;
+                const val   = ctx.parsed.y.toLocaleString();
+                return ` ${label}: ${val} 만원`;
+              },
+              labelColor: ctx => ({
+                borderColor: ctx.datasetIndex === 0 ? '#6366f1' : barColors[ctx.dataIndex].border,
+                backgroundColor: ctx.datasetIndex === 0 ? '#6366f1' : barColors[ctx.dataIndex].border,
+                borderRadius: 3
+              })
             }
           }
         },
         scales: {
-          ...commonOptions.scales,
+          x: { grid: { color: '#1e2540' }, ticks: { color: '#64748b' } },
           y: {
-            ...commonOptions.scales.y,
-            ticks: {
-              color: '#64748b',
-              callback: v => v.toLocaleString()
-            }
+            grid: { color: '#1e2540' },
+            ticks: { color: '#64748b', callback: v => v.toLocaleString() }
           }
         }
       }
@@ -252,11 +328,12 @@
           {
             label: '달성률',
             data: rates,
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16,185,129,0.12)',
+            borderColor: '#818cf8',
+            backgroundColor: 'rgba(129,140,248,0.1)',
             borderWidth: 2.5,
-            pointRadius: 5,
-            pointBackgroundColor: rates.map(r => r >= 100 ? '#10b981' : '#f59e0b'),
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            pointBackgroundColor: rates.map(r => r >= 100 ? '#10b981' : '#ef4444'),
             pointBorderColor: '#0f1117',
             pointBorderWidth: 2,
             fill: true,
@@ -274,26 +351,41 @@
         ]
       },
       options: {
-        ...commonOptions,
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
         plugins: {
-          ...commonOptions.plugins,
+          legend: {
+            labels: { color: '#94a3b8', font: { size: 12 }, padding: 20, usePointStyle: true }
+          },
           tooltip: {
-            ...commonOptions.plugins.tooltip,
+            ...tooltipBase,
             callbacks: {
-              label: ctx => ctx.datasetIndex === 0
-                ? ` 달성률: ${ctx.parsed.y}%`
-                : ` 목표: 100%`
+              title: ctx => ctx[0].label,
+              label: ctx => {
+                if (ctx.datasetIndex === 1) return null;
+                const i = ctx.dataIndex;
+                const r = rates[i];
+                const icon = r >= 100 ? '▲' : '▼';
+                return [
+                  ` 달성률: ${r}%  ${icon}`,
+                  ` 목표: ${goals[i].toLocaleString()} 만원`,
+                  ` 실적: ${actuals[i].toLocaleString()} 만원`
+                ];
+              },
+              labelColor: ctx => {
+                if (ctx.datasetIndex === 1) return null;
+                const color = rates[ctx.dataIndex] >= 100 ? '#10b981' : '#ef4444';
+                return { borderColor: color, backgroundColor: color, borderRadius: 3 };
+              }
             }
           }
         },
         scales: {
-          ...commonOptions.scales,
+          x: { grid: { color: '#1e2540' }, ticks: { color: '#64748b' } },
           y: {
-            ...commonOptions.scales.y,
-            ticks: {
-              color: '#64748b',
-              callback: v => v + '%'
-            }
+            grid: { color: '#1e2540' },
+            ticks: { color: '#64748b', callback: v => v + '%' }
           }
         }
       }
