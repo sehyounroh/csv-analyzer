@@ -1,398 +1,811 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>영업팀 실적 대시보드</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSV 분석기</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-      background: #f1f5f9;
-      color: #1e293b;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      min-height: 100vh;
-      padding: 32px 24px;
-    }
+:root {
+  --bg: #0a0a12;
+  --surface: #12121e;
+  --elevated: #1a1a2e;
+  --border: #252538;
+  --border-light: #2e2e4a;
+  --accent: #6366f1;
+  --accent-soft: rgba(99,102,241,0.15);
+  --accent-glow: rgba(99,102,241,0.3);
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --dim: #64748b;
+  --green: #34d399;
+  --yellow: #fbbf24;
+  --red: #f87171;
+  --blue: #38bdf8;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
 
-    header {
-      margin-bottom: 32px;
-    }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+  line-height: 1.5;
+}
 
-    header h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #0f172a;
-      letter-spacing: -0.02em;
-    }
+/* ── HEADER ── */
+header {
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+}
+.logo-icon {
+  width: 36px; height: 36px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-glow);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+header h1 { font-size: 1.25rem; font-weight: 700; }
+header p  { font-size: .78rem; color: var(--muted); margin-top: 1px; }
 
-    header p {
-      font-size: 0.85rem;
-      color: #64748b;
-      margin-top: 4px;
-    }
+/* ── UPLOAD SECTION ── */
+#uploadSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 69px);
+  padding: 40px;
+}
+#dropzone {
+  width: 100%;
+  max-width: 500px;
+  border: 2px dashed var(--border-light);
+  border-radius: 20px;
+  padding: 56px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  background: var(--surface);
+}
+#dropzone:hover, #dropzone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-3px);
+  box-shadow: 0 0 48px var(--accent-glow);
+}
+.dz-icon {
+  width: 72px; height: 72px;
+  margin: 0 auto 22px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-glow);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent);
+}
+#dropzone h2 { font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; }
+#dropzone p  { font-size: .88rem; color: var(--muted); }
+.dz-sub { font-size: .76rem !important; color: var(--dim) !important; margin-top: 5px !important; }
+.dz-btn {
+  display: inline-block;
+  margin-top: 26px;
+  padding: 10px 28px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: .88rem;
+  font-weight: 600;
+}
 
-    /* Summary Cards */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 28px;
-    }
+/* ── RESULTS SECTION ── */
+#resultsSection { display: none; padding: 28px 32px 60px; max-width: 1400px; margin: 0 auto; }
 
-    .card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 22px 24px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    }
+.results-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.file-info { display: flex; align-items: center; gap: 10px; }
+.file-badge {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-glow);
+  color: var(--accent);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: .8rem;
+  font-weight: 600;
+}
+.file-stats { font-size: .83rem; color: var(--muted); }
+.btn-reset {
+  padding: 8px 18px;
+  border: 1px solid var(--border-light);
+  background: var(--elevated);
+  color: var(--muted);
+  border-radius: var(--radius-sm);
+  font-size: .83rem;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-reset:hover { border-color: var(--accent); color: var(--accent); }
 
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-    }
+/* ── SECTION TITLE ── */
+.section-title {
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-title::before {
+  content: '';
+  width: 3px; height: 16px;
+  background: var(--accent);
+  border-radius: 2px;
+}
 
-    .card.goal::before   { background: #6366f1; }
-    .card.actual::before { background: #0ea5e9; }
-    .card.rate::before   { background: #10b981; }
+/* ── STATS CARDS ── */
+#statsSection { margin-bottom: 28px; }
+#statsCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+}
+.stat-card {
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  transition: border-color .15s;
+}
+.stat-card:hover { border-color: var(--border-light); }
+.stat-col-name {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat-item { display: flex; flex-direction: column; gap: 2px; }
+.stat-label {
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--dim);
+  font-weight: 600;
+}
+.stat-value {
+  font-size: .92rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.stat-item:nth-child(1) .stat-value { color: var(--blue); }
+.stat-item:nth-child(2) .stat-value { color: var(--green); }
+.stat-item:nth-child(3) .stat-value { color: var(--red); }
+.stat-item:nth-child(4) .stat-value { color: var(--yellow); }
 
-    .card .label {
-      font-size: 0.75rem;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 10px;
-    }
+/* ── CHART SECTION ── */
+#chartSection {
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  margin-bottom: 28px;
+}
+.chart-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.ctrl-group { display: flex; align-items: center; gap: 8px; }
+.ctrl-label {
+  font-size: .75rem;
+  color: var(--dim);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  white-space: nowrap;
+}
+.ctrl-select {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  color: var(--text);
+  padding: 7px 32px 7px 12px;
+  border-radius: var(--radius-sm);
+  font-size: .83rem;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  min-width: 140px;
+  transition: border-color .15s;
+}
+.ctrl-select:focus { outline: none; border-color: var(--accent); }
 
-    .card .value {
-      font-size: 2rem;
-      font-weight: 700;
-      line-height: 1;
-      margin-bottom: 6px;
-    }
+.type-toggle {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-left: auto;
+}
+.type-btn {
+  padding: 7px 16px;
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--dim);
+  transition: all .15s;
+  display: flex; align-items: center; gap: 5px;
+}
+.type-btn.active { background: var(--accent); color: #fff; }
+.type-btn:not(.active):hover { color: var(--text); }
 
-    .card.goal   .value { color: #6366f1; }
-    .card.actual .value { color: #0ea5e9; }
-    .card.rate   .value { color: #10b981; }
+.chart-wrapper { position: relative; height: 340px; }
 
-    .card .sub {
-      font-size: 0.78rem;
-      color: #94a3b8;
-    }
+/* ── TABLE SECTION ── */
+#tableSection {
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+}
+.table-meta { font-size: .78rem; color: var(--dim); margin-bottom: 12px; }
+.table-scroll {
+  overflow: auto;
+  max-height: 440px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.table-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+.table-scroll::-webkit-scrollbar-track { background: var(--surface); }
+.table-scroll::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
 
-    /* Charts */
-    .chart-section {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    }
+table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+thead th {
+  position: sticky; top: 0; z-index: 1;
+  background: var(--surface);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+thead th.numeric { text-align: right; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(99,102,241,.06); }
+tbody td {
+  padding: 8px 14px;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+tbody td.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--blue);
+}
 
-    .chart-section h2 {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #64748b;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 20px;
-    }
+/* ── EMPTY STATE ── */
+.no-stats {
+  padding: 22px;
+  text-align: center;
+  color: var(--dim);
+  font-size: .85rem;
+  background: var(--elevated);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
 
-    .chart-wrap {
-      position: relative;
-      height: 300px;
-    }
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: #ef4444;
+  color: #fff;
+  padding: 9px 22px;
+  border-radius: 8px;
+  font-size: .83rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: all .3s;
+  pointer-events: none;
+  z-index: 100;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* Badges */
-    .badges {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 999px;
-      padding: 8px 16px;
-      font-size: 0.82rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-
-    .badge .dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .badge.best  { border-color: rgba(16,185,129,0.35); }
-    .badge.worst { border-color: rgba(239,68,68,0.35); }
-    .badge.best  .dot { background: #10b981; }
-    .badge.worst .dot { background: #ef4444; }
-
-    .badge .badge-label { color: #94a3b8; }
-    .badge .badge-month { color: #1e293b; font-weight: 600; }
-    .badge .badge-rate  { font-weight: 700; }
-    .badge.best  .badge-rate { color: #10b981; }
-    .badge.worst .badge-rate { color: #ef4444; }
-
-    @media (max-width: 640px) {
-      .cards { grid-template-columns: 1fr; }
-      .card .value { font-size: 1.6rem; }
-    }
-  </style>
+@media (max-width: 640px) {
+  header { padding: 14px 18px; }
+  #resultsSection { padding: 16px 14px 40px; }
+  #uploadSection { padding: 20px 16px; min-height: calc(100vh - 61px); }
+  .chart-controls { flex-direction: column; align-items: stretch; }
+  .type-toggle { margin-left: 0; }
+}
+</style>
 </head>
 <body>
 
-  <header>
-    <h1>영업팀 실적 대시보드</h1>
-    <p>2024년 연간 목표 vs 실적 현황</p>
-  </header>
+<header>
+  <div class="logo-icon">📊</div>
+  <div>
+    <h1>CSV 분석기</h1>
+    <p>CSV 파일을 업로드하여 데이터를 시각화하세요</p>
+  </div>
+</header>
 
-  <div class="badges" id="badges"></div>
+<!-- ── UPLOAD ── -->
+<div id="uploadSection">
+  <div id="dropzone">
+    <div class="dz-icon">
+      <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+    </div>
+    <h2>CSV 파일을 드래그하여 업로드</h2>
+    <p>또는 클릭하여 파일을 선택하세요</p>
+    <p class="dz-sub">UTF-8 · EUC-KR 인코딩 지원 · .csv 파일</p>
+    <div class="dz-btn">파일 선택</div>
+    <input type="file" id="fileInput" accept=".csv,.tsv,.txt" hidden>
+  </div>
+</div>
 
-  <div class="cards">
-    <div class="card goal">
-      <div class="label">연간 총 목표</div>
-      <div class="value" id="totalGoal">—</div>
-      <div class="sub">만원</div>
+<!-- ── RESULTS ── -->
+<div id="resultsSection">
+  <div class="results-topbar">
+    <div class="file-info">
+      <span class="file-badge" id="fileName"></span>
+      <span class="file-stats" id="fileStats"></span>
     </div>
-    <div class="card actual">
-      <div class="label">연간 총 실적</div>
-      <div class="value" id="totalActual">—</div>
-      <div class="sub">만원</div>
-    </div>
-    <div class="card rate">
-      <div class="label">연간 달성률</div>
-      <div class="value" id="achieveRate">—</div>
-      <div class="sub">목표 대비</div>
-    </div>
+    <button class="btn-reset" id="resetBtn">↩ 새 파일 업로드</button>
   </div>
 
-  <div class="chart-section">
-    <h2>월별 목표 vs 실적</h2>
-    <div class="chart-wrap">
-      <canvas id="barChart"></canvas>
-    </div>
+  <div id="statsSection">
+    <div class="section-title">수치 통계</div>
+    <div id="statsCards"></div>
   </div>
 
-  <div class="chart-section">
-    <h2>월별 달성률 (%)</h2>
-    <div class="chart-wrap">
-      <canvas id="lineChart"></canvas>
-    </div>
-  </div>
-
-  <script>
-    const months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-    const goals   = [5000,5000,5500,5500,6000,6000,6500,6500,7000,7000,7500,8000];
-    const actuals = [4200,5800,6100,4900,6300,7100,6200,5900,7800,8200,7100,9300];
-    const rates   = actuals.map((a, i) => +((a / goals[i]) * 100).toFixed(1));
-
-    const totalGoal   = goals.reduce((s, v) => s + v, 0);
-    const totalActual = actuals.reduce((s, v) => s + v, 0);
-    const totalRate   = ((totalActual / totalGoal) * 100).toFixed(1);
-
-    document.getElementById('totalGoal').textContent   = totalGoal.toLocaleString();
-    document.getElementById('totalActual').textContent = totalActual.toLocaleString();
-    document.getElementById('achieveRate').textContent = totalRate + '%';
-
-    // Best / Worst badges
-    const bestIdx  = rates.indexOf(Math.max(...rates));
-    const worstIdx = rates.indexOf(Math.min(...rates));
-    document.getElementById('badges').innerHTML = `
-      <div class="badge best">
-        <span class="dot"></span>
-        <span class="badge-label">최고 달성월</span>
-        <span class="badge-month">${months[bestIdx]}</span>
-        <span class="badge-rate">${rates[bestIdx]}%</span>
+  <div id="chartSection">
+    <div class="section-title">데이터 시각화</div>
+    <div class="chart-controls">
+      <div class="ctrl-group">
+        <span class="ctrl-label">X축</span>
+        <select id="xAxisSelect" class="ctrl-select"></select>
       </div>
-      <div class="badge worst">
-        <span class="dot"></span>
-        <span class="badge-label">최저 달성월</span>
-        <span class="badge-month">${months[worstIdx]}</span>
-        <span class="badge-rate">${rates[worstIdx]}%</span>
+      <div class="ctrl-group">
+        <span class="ctrl-label">Y축</span>
+        <select id="yAxisSelect" class="ctrl-select"></select>
       </div>
-    `;
+      <div class="type-toggle">
+        <button class="type-btn active" id="barBtn">
+          <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z"/>
+          </svg>
+          막대
+        </button>
+        <button class="type-btn" id="lineBtn">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          꺾은선
+        </button>
+      </div>
+    </div>
+    <div class="chart-wrapper">
+      <canvas id="myChart"></canvas>
+    </div>
+  </div>
 
-    Chart.defaults.color = '#64748b';
-    Chart.defaults.borderColor = '#e2e8f0';
+  <div id="tableSection">
+    <div class="section-title">데이터 테이블</div>
+    <div class="table-meta" id="tableMeta"></div>
+    <div class="table-scroll">
+      <table id="dataTable"></table>
+    </div>
+  </div>
+</div>
 
-    const tooltipBase = {
-      backgroundColor: '#ffffff',
-      borderColor: '#e2e8f0',
-      borderWidth: 1,
-      titleColor: '#0f172a',
-      bodyColor: '#475569',
-      padding: 12,
-      cornerRadius: 8,
-      boxPadding: 4
-    };
+<div id="toast"></div>
 
-    // Bar Chart — 실적 막대 색: 달성 초록 / 미달 빨강
-    const barColors = actuals.map((a, i) =>
-      a >= goals[i]
-        ? { bg: 'rgba(16,185,129,0.55)',  border: '#10b981' }
-        : { bg: 'rgba(239,68,68,0.55)',   border: '#ef4444' }
-    );
+<script>
+// ── STATE ──
+let state = { headers: [], rows: [], numericCols: [], fileName: '' };
+let chartInstance = null;
+let currentChartType = 'bar';
 
-    new Chart(document.getElementById('barChart'), {
-      type: 'bar',
-      data: {
-        labels: months,
-        datasets: [
-          {
-            label: '목표',
-            data: goals,
-            backgroundColor: 'rgba(99,102,241,0.45)',
-            borderColor: '#6366f1',
-            borderWidth: 1.5,
-            borderRadius: 4,
-            borderSkipped: false,
-            order: 2
-          },
-          {
-            label: '실적',
-            data: actuals,
-            backgroundColor: barColors.map(c => c.bg),
-            borderColor: barColors.map(c => c.border),
-            borderWidth: 1.5,
-            borderRadius: 4,
-            borderSkipped: false,
-            order: 1
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: {
-            labels: {
-              color: '#64748b', font: { size: 12 }, padding: 20, usePointStyle: true,
-              generateLabels: chart => {
-                const base = Chart.defaults.plugins.legend.labels.generateLabels(chart);
-                base[1].fillStyle = 'rgba(100,116,139,0.35)';
-                base[1].strokeStyle = '#64748b';
-                return base;
-              }
-            }
-          },
-          tooltip: {
-            ...tooltipBase,
-            callbacks: {
-              title: ctx => ctx[0].label,
-              beforeBody: ctx => {
-                const i = ctx[0].dataIndex;
-                return `달성률: ${rates[i]}%  ${rates[i] >= 100 ? '✅' : '❌'}`;
-              },
-              label: ctx => {
-                const label = ctx.dataset.label;
-                const val   = ctx.parsed.y.toLocaleString();
-                return ` ${label}: ${val} 만원`;
-              },
-              labelColor: ctx => ({
-                borderColor: ctx.datasetIndex === 0 ? '#6366f1' : barColors[ctx.dataIndex].border,
-                backgroundColor: ctx.datasetIndex === 0 ? '#6366f1' : barColors[ctx.dataIndex].border,
-                borderRadius: 3
-              })
-            }
-          }
-        },
-        scales: {
-          x: { grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8' } },
-          y: {
-            grid: { color: '#f1f5f9' },
-            ticks: { color: '#94a3b8', callback: v => v.toLocaleString() }
+const CHART_COLORS = [
+  '#818cf8','#34d399','#fbbf24','#f87171','#38bdf8',
+  '#a78bfa','#fb923c','#4ade80','#e879f9','#22d3ee'
+];
+
+// ── DRAG & DROP ──
+const dropzone      = document.getElementById('dropzone');
+const fileInput     = document.getElementById('fileInput');
+const uploadSection = document.getElementById('uploadSection');
+const resultsSection= document.getElementById('resultsSection');
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover',  e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+dropzone.addEventListener('dragend',   () => dropzone.classList.remove('drag-over'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+});
+fileInput.addEventListener('change', e => {
+  if (e.target.files[0]) processFile(e.target.files[0]);
+  fileInput.value = '';
+});
+document.getElementById('resetBtn').addEventListener('click', () => {
+  uploadSection.style.display = 'flex';
+  resultsSection.style.display = 'none';
+  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+  state = { headers: [], rows: [], numericCols: [], fileName: '' };
+});
+
+// ── FILE DECODE ──
+function processFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const buf = e.target.result;
+    state.fileName = file.name;
+    analyzeCSV(decodeBuffer(buf));
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function decodeBuffer(buf) {
+  // Try UTF-8 first (strip BOM if present)
+  const utf8 = new TextDecoder('utf-8', { fatal: false }).decode(buf);
+  const clean = utf8.charCodeAt(0) === 0xFEFF ? utf8.slice(1) : utf8;
+  if (!clean.includes('\uFFFD')) return clean;
+  // Fallback: EUC-KR (common for Korean legacy files)
+  try { return new TextDecoder('euc-kr').decode(buf); } catch { return clean; }
+}
+
+// ── CSV PARSING ──
+function detectDelimiter(line) {
+  const candidates = { ',': 0, ';': 0, '\t': 0 };
+  let inQ = false;
+  for (const c of line) {
+    if (c === '"') inQ = !inQ;
+    else if (!inQ && c in candidates) candidates[c]++;
+  }
+  return Object.entries(candidates).sort((a, b) => b[1] - a[1])[0][0];
+}
+
+function splitLine(line, delim) {
+  const fields = [];
+  let field = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') {
+      if (inQ && line[i + 1] === '"') { field += '"'; i++; }
+      else inQ = !inQ;
+    } else if (c === delim && !inQ) {
+      fields.push(field.trim());
+      field = '';
+    } else {
+      field += c;
+    }
+  }
+  fields.push(field.trim());
+  return fields;
+}
+
+function parseCSV(text) {
+  // Split into logical lines (respecting quoted newlines)
+  const rawLines = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (c === '"') inQ = !inQ;
+    if (c === '\n' && !inQ) {
+      rawLines.push(cur.replace(/\r$/, ''));
+      cur = '';
+    } else {
+      cur += c;
+    }
+  }
+  if (cur.trim()) rawLines.push(cur.replace(/\r$/, ''));
+
+  const lines = rawLines.filter(l => l.trim());
+  if (lines.length === 0) return { headers: [], rows: [] };
+
+  const delim = detectDelimiter(lines[0]);
+  const all = lines.map(l => splitLine(l, delim));
+  return { headers: all[0], rows: all.slice(1) };
+}
+
+// ── ANALYZE ──
+function isNumeric(v) {
+  return v !== '' && !isNaN(Number(String(v).replace(/,/g, '')));
+}
+function toNum(v) {
+  return parseFloat(String(v).replace(/,/g, ''));
+}
+
+function analyzeCSV(text) {
+  const { headers, rows } = parseCSV(text);
+  if (!headers.length || !rows.length) {
+    showToast('파싱 오류: CSV 형식을 확인하세요.');
+    return;
+  }
+
+  // Detect numeric columns: >60% of non-empty values parseable as numbers
+  const numericCols = headers.map((_, ci) => {
+    const vals = rows.map(r => r[ci]).filter(v => v !== undefined && v !== '');
+    if (!vals.length) return false;
+    return vals.filter(v => isNumeric(v)).length / vals.length >= 0.6;
+  });
+
+  state = { headers, rows, numericCols, fileName: state.fileName };
+  renderResults();
+}
+
+// ── RENDER RESULTS ──
+function renderResults() {
+  uploadSection.style.display = 'none';
+  resultsSection.style.display = 'block';
+  document.getElementById('fileName').textContent = state.fileName;
+  document.getElementById('fileStats').textContent =
+    `${state.rows.length.toLocaleString()}행 · ${state.headers.length}열`;
+  renderStats();
+  setupChart();
+  renderTable();
+}
+
+// ── STATS CARDS ──
+function renderStats() {
+  const { headers, rows, numericCols } = state;
+  const container = document.getElementById('statsCards');
+  container.innerHTML = '';
+
+  const hasNumeric = numericCols.some(Boolean);
+  if (!hasNumeric) {
+    container.innerHTML = '<div class="no-stats">수치형 컬럼이 감지되지 않았습니다.</div>';
+    return;
+  }
+
+  headers.forEach((header, ci) => {
+    if (!numericCols[ci]) return;
+    const vals = rows.map(r => r[ci]).filter(v => v && isNumeric(v)).map(toNum);
+    if (!vals.length) return;
+
+    const sum = vals.reduce((a, b) => a + b, 0);
+    const avg = sum / vals.length;
+    const max = Math.max(...vals);
+    const min = Math.min(...vals);
+
+    const card = document.createElement('div');
+    card.className = 'stat-card';
+    card.innerHTML = `
+      <div class="stat-col-name" title="${esc(header)}">${esc(header)}</div>
+      <div class="stat-grid">
+        <div class="stat-item">
+          <span class="stat-label">평균</span>
+          <span class="stat-value">${fmt(avg)}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">최대</span>
+          <span class="stat-value">${fmt(max)}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">최소</span>
+          <span class="stat-value">${fmt(min)}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">합계</span>
+          <span class="stat-value">${fmt(sum)}</span>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function fmt(n) {
+  if (!isFinite(n)) return '—';
+  const abs = Math.abs(n);
+  if (abs >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+  if (abs >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+  if (abs >= 1e4) return n.toLocaleString('ko-KR', { maximumFractionDigits: 0 });
+  if (Number.isInteger(n)) return n.toLocaleString('ko-KR');
+  return n.toLocaleString('ko-KR', { maximumFractionDigits: 3 });
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── CHART ──
+function setupChart() {
+  const { headers, numericCols } = state;
+  const xSel = document.getElementById('xAxisSelect');
+  const ySel = document.getElementById('yAxisSelect');
+  xSel.innerHTML = '';
+  ySel.innerHTML = '';
+
+  headers.forEach((h, i) => xSel.add(new Option(h, i)));
+  headers.forEach((h, i) => { if (numericCols[i]) ySel.add(new Option(h, i)); });
+
+  // Sensible defaults: X = first non-numeric col (or col 0), Y = first numeric col
+  const firstNonNum = numericCols.findIndex(v => !v);
+  xSel.value = firstNonNum >= 0 ? firstNonNum : 0;
+  if (ySel.options.length > 0) ySel.value = ySel.options[0].value;
+
+  xSel.onchange = renderChart;
+  ySel.onchange = renderChart;
+
+  // Chart type buttons (remove old listeners by cloning)
+  const barBtn  = document.getElementById('barBtn');
+  const lineBtn = document.getElementById('lineBtn');
+  const newBar  = barBtn.cloneNode(true);
+  const newLine = lineBtn.cloneNode(true);
+  barBtn.replaceWith(newBar);
+  lineBtn.replaceWith(newLine);
+  newBar.addEventListener('click',  () => setChartType('bar'));
+  newLine.addEventListener('click', () => setChartType('line'));
+  // Reset active state
+  newBar.classList.add('active');
+  newLine.classList.remove('active');
+  currentChartType = 'bar';
+
+  renderChart();
+}
+
+function setChartType(type) {
+  currentChartType = type;
+  document.getElementById('barBtn').classList.toggle('active',  type === 'bar');
+  document.getElementById('lineBtn').classList.toggle('active', type === 'line');
+  renderChart();
+}
+
+function renderChart() {
+  const xIdx = parseInt(document.getElementById('xAxisSelect').value);
+  const yIdx = parseInt(document.getElementById('yAxisSelect').value);
+  if (isNaN(xIdx) || isNaN(yIdx)) return;
+
+  const { rows, headers } = state;
+  const MAX_CHART = 120;
+  const display = rows.slice(0, MAX_CHART);
+
+  const labels = display.map(r => r[xIdx] ?? '');
+  const data   = display.map(r => {
+    const v = r[yIdx];
+    return (v !== undefined && isNumeric(v)) ? toNum(v) : null;
+  });
+
+  const color = CHART_COLORS[yIdx % CHART_COLORS.length];
+
+  if (chartInstance) chartInstance.destroy();
+
+  const ctx = document.getElementById('myChart').getContext('2d');
+  chartInstance = new Chart(ctx, {
+    type: currentChartType,
+    data: {
+      labels,
+      datasets: [{
+        label: headers[yIdx],
+        data,
+        backgroundColor: currentChartType === 'bar' ? color + 'aa' : color + '18',
+        borderColor: color,
+        borderWidth: currentChartType === 'bar' ? 1 : 2,
+        borderRadius: currentChartType === 'bar' ? 4 : 0,
+        pointBackgroundColor: color,
+        pointRadius: data.length > 60 ? 2 : 4,
+        pointHoverRadius: 6,
+        tension: 0.35,
+        fill: currentChartType === 'line',
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 300 },
+      plugins: {
+        legend: { labels: { color: '#94a3b8', font: { size: 12 } } },
+        tooltip: {
+          backgroundColor: '#1a1a2e',
+          borderColor: '#252538',
+          borderWidth: 1,
+          titleColor: '#f1f5f9',
+          bodyColor: '#94a3b8',
+          padding: 10,
+          callbacks: {
+            label: ctx => ` ${fmt(ctx.parsed.y)}`
           }
         }
-      }
-    });
-
-    // Line Chart
-    new Chart(document.getElementById('lineChart'), {
-      type: 'line',
-      data: {
-        labels: months,
-        datasets: [
-          {
-            label: '달성률',
-            data: rates,
-            borderColor: '#6366f1',
-            backgroundColor: 'rgba(99,102,241,0.08)',
-            borderWidth: 2.5,
-            pointRadius: 6,
-            pointHoverRadius: 8,
-            pointBackgroundColor: rates.map(r => r >= 100 ? '#10b981' : '#ef4444'),
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            fill: true,
-            tension: 0.35
-          },
-          {
-            label: '목표선 (100%)',
-            data: Array(12).fill(100),
-            borderColor: '#cbd5e1',
-            borderWidth: 1.5,
-            borderDash: [6, 4],
-            pointRadius: 0,
-            fill: false
-          }
-        ]
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: {
-            labels: { color: '#64748b', font: { size: 12 }, padding: 20, usePointStyle: true }
-          },
-          tooltip: {
-            ...tooltipBase,
-            callbacks: {
-              title: ctx => ctx[0].label,
-              label: ctx => {
-                if (ctx.datasetIndex === 1) return null;
-                const i = ctx.dataIndex;
-                const r = rates[i];
-                const icon = r >= 100 ? '▲' : '▼';
-                return [
-                  ` 달성률: ${r}%  ${icon}`,
-                  ` 목표: ${goals[i].toLocaleString()} 만원`,
-                  ` 실적: ${actuals[i].toLocaleString()} 만원`
-                ];
-              },
-              labelColor: ctx => {
-                if (ctx.datasetIndex === 1) return null;
-                const color = rates[ctx.dataIndex] >= 100 ? '#10b981' : '#ef4444';
-                return { borderColor: color, backgroundColor: color, borderRadius: 3 };
-              }
-            }
-          }
+      scales: {
+        x: {
+          ticks: { color: '#64748b', maxTicksLimit: 16, maxRotation: 45, font: { size: 11 } },
+          grid:  { color: 'rgba(255,255,255,0.04)' }
         },
-        scales: {
-          x: { grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8' } },
-          y: {
-            grid: { color: '#f1f5f9' },
-            ticks: { color: '#94a3b8', callback: v => v + '%' }
-          }
+        y: {
+          ticks: { color: '#64748b', font: { size: 11 }, callback: v => fmt(v) },
+          grid:  { color: 'rgba(255,255,255,0.06)' }
         }
       }
-    });
-  </script>
+    }
+  });
+}
 
+// ── TABLE ──
+function renderTable() {
+  const { headers, rows, numericCols } = state;
+  const MAX_ROWS = 500;
+  const display  = rows.slice(0, MAX_ROWS);
+
+  document.getElementById('tableMeta').textContent =
+    rows.length > MAX_ROWS
+      ? `상위 ${MAX_ROWS.toLocaleString()}행 표시 중 (전체 ${rows.length.toLocaleString()}행)`
+      : `전체 ${rows.length.toLocaleString()}행`;
+
+  const table = document.getElementById('dataTable');
+  table.innerHTML = '';
+
+  // Head
+  const thead = table.createTHead();
+  const hRow  = thead.insertRow();
+  headers.forEach((h, i) => {
+    const th = document.createElement('th');
+    th.textContent = h;
+    if (numericCols[i]) th.classList.add('numeric');
+    hRow.appendChild(th);
+  });
+
+  // Body
+  const tbody = table.createTBody();
+  display.forEach(row => {
+    const tr = tbody.insertRow();
+    headers.forEach((_, i) => {
+      const td = tr.insertCell();
+      const val = row[i] ?? '';
+      td.textContent = val;
+      td.title = val;
+      if (numericCols[i] && isNumeric(val)) td.classList.add('numeric');
+    });
+  });
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
 </body>
 </html>
