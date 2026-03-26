@@ -9,23 +9,26 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --bg: #0a0a12;
-  --surface: #12121e;
-  --elevated: #1a1a2e;
-  --border: #252538;
-  --border-light: #2e2e4a;
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --elevated: #f8fafc;
+  --border: #e2e8f0;
+  --border-md: #cbd5e1;
   --accent: #6366f1;
-  --accent-soft: rgba(99,102,241,0.15);
-  --accent-glow: rgba(99,102,241,0.3);
-  --text: #f1f5f9;
-  --muted: #94a3b8;
-  --dim: #64748b;
-  --green: #34d399;
-  --yellow: #fbbf24;
-  --red: #f87171;
-  --blue: #38bdf8;
+  --accent-soft: rgba(99,102,241,0.08);
+  --accent-mid: rgba(99,102,241,0.18);
+  --accent-glow: rgba(99,102,241,0.25);
+  --text: #1e293b;
+  --muted: #64748b;
+  --dim: #94a3b8;
+  --green: #059669;
+  --yellow: #d97706;
+  --red: #dc2626;
+  --blue: #2563eb;
   --radius: 12px;
   --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.08);
 }
 
 body {
@@ -38,312 +41,404 @@ body {
 
 /* ── HEADER ── */
 header {
-  padding: 20px 32px;
+  padding: 16px 32px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   gap: 14px;
   background: var(--surface);
+  box-shadow: var(--shadow);
+  position: sticky; top: 0; z-index: 20;
 }
 .logo-icon {
-  width: 36px; height: 36px;
+  width: 34px; height: 34px;
   background: var(--accent-soft);
-  border: 1px solid var(--accent-glow);
+  border: 1px solid var(--accent-mid);
   border-radius: var(--radius-sm);
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
+  font-size: 17px;
 }
-header h1 { font-size: 1.25rem; font-weight: 700; }
-header p  { font-size: .78rem; color: var(--muted); margin-top: 1px; }
+header h1 { font-size: 1.15rem; font-weight: 800; color: var(--text); }
+header p  { font-size: .75rem; color: var(--muted); margin-top: 1px; }
 
-/* ── UPLOAD SECTION ── */
+/* ── UPLOAD ── */
 #uploadSection {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 69px);
+  display: flex; align-items: center; justify-content: center;
+  min-height: calc(100vh - 67px);
   padding: 40px;
 }
 #dropzone {
-  width: 100%;
-  max-width: 500px;
-  border: 2px dashed var(--border-light);
+  width: 100%; max-width: 480px;
+  border: 2px dashed var(--border-md);
   border-radius: 20px;
-  padding: 56px 40px;
+  padding: 52px 36px;
   text-align: center;
   cursor: pointer;
   transition: all .2s;
   background: var(--surface);
+  box-shadow: var(--shadow);
 }
 #dropzone:hover, #dropzone.drag-over {
   border-color: var(--accent);
   background: var(--accent-soft);
   transform: translateY(-3px);
-  box-shadow: 0 0 48px var(--accent-glow);
+  box-shadow: 0 8px 30px var(--accent-glow);
 }
 .dz-icon {
-  width: 72px; height: 72px;
-  margin: 0 auto 22px;
+  width: 68px; height: 68px;
+  margin: 0 auto 20px;
   background: var(--accent-soft);
-  border: 1px solid var(--accent-glow);
+  border: 1.5px solid var(--accent-mid);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   color: var(--accent);
 }
-#dropzone h2 { font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; }
-#dropzone p  { font-size: .88rem; color: var(--muted); }
-.dz-sub { font-size: .76rem !important; color: var(--dim) !important; margin-top: 5px !important; }
+#dropzone h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 7px; color: var(--text); }
+#dropzone p  { font-size: .86rem; color: var(--muted); }
+.dz-sub { font-size: .74rem !important; color: var(--dim) !important; margin-top: 5px !important; }
 .dz-btn {
-  display: inline-block;
-  margin-top: 26px;
-  padding: 10px 28px;
-  background: var(--accent);
-  color: #fff;
+  display: inline-block; margin-top: 24px;
+  padding: 9px 28px;
+  background: var(--accent); color: #fff;
   border-radius: var(--radius-sm);
-  font-size: .88rem;
-  font-weight: 600;
+  font-size: .86rem; font-weight: 700;
+  box-shadow: 0 2px 8px var(--accent-glow);
 }
 
-/* ── RESULTS SECTION ── */
-#resultsSection { display: none; padding: 28px 32px 60px; max-width: 1400px; margin: 0 auto; }
+/* ── RESULTS ── */
+#resultsSection { display: none; padding: 24px 28px 56px; max-width: 1440px; margin: 0 auto; }
 
 .results-topbar {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 28px;
-  padding-bottom: 20px;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
   border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
-  gap: 12px;
+  flex-wrap: wrap; gap: 10px;
 }
 .file-info { display: flex; align-items: center; gap: 10px; }
 .file-badge {
   background: var(--accent-soft);
-  border: 1px solid var(--accent-glow);
+  border: 1px solid var(--accent-mid);
   color: var(--accent);
-  padding: 4px 12px;
+  padding: 3px 12px;
   border-radius: 20px;
-  font-size: .8rem;
-  font-weight: 600;
+  font-size: .78rem; font-weight: 700;
 }
-.file-stats { font-size: .83rem; color: var(--muted); }
-.btn-reset {
-  padding: 8px 18px;
-  border: 1px solid var(--border-light);
-  background: var(--elevated);
-  color: var(--muted);
+.file-stats { font-size: .82rem; color: var(--muted); }
+.topbar-actions { display: flex; gap: 8px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 15px;
   border-radius: var(--radius-sm);
-  font-size: .83rem;
-  cursor: pointer;
+  font-size: .82rem; font-weight: 600;
+  cursor: pointer; border: none;
   transition: all .15s;
 }
-.btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+.btn-ghost {
+  background: var(--surface);
+  border: 1px solid var(--border-md);
+  color: var(--muted);
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+.btn-accent {
+  background: var(--accent); color: #fff;
+  box-shadow: 0 1px 4px var(--accent-glow);
+}
+.btn-accent:hover { background: #5457d8; }
+.btn-green {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: var(--green);
+}
+.btn-green:hover { background: #d1fae5; }
+.btn-sm { padding: 5px 11px; font-size: .76rem; }
+.btn-text-danger {
+  background: none; border: none;
+  color: var(--red); font-size: .78rem;
+  cursor: pointer; font-weight: 600;
+  padding: 4px 8px; border-radius: 6px;
+}
+.btn-text-danger:hover { background: #fef2f2; }
 
 /* ── SECTION TITLE ── */
+.section-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px; flex-wrap: wrap;
+}
 .section-title {
-  font-size: .95rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 16px;
-  display: flex; align-items: center; gap: 8px;
+  font-size: .92rem; font-weight: 800; color: var(--text);
+  display: flex; align-items: center; gap: 7px;
 }
 .section-title::before {
-  content: '';
-  width: 3px; height: 16px;
-  background: var(--accent);
-  border-radius: 2px;
+  content: ''; width: 3px; height: 15px;
+  background: var(--accent); border-radius: 2px;
 }
+.section-spacer { flex: 1; }
 
 /* ── STATS CARDS ── */
-#statsSection { margin-bottom: 28px; }
+#statsSection { margin-bottom: 22px; }
 #statsCards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   gap: 12px;
 }
 .stat-card {
-  background: var(--elevated);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px 18px;
-  transition: border-color .15s;
+  box-shadow: var(--shadow);
+  transition: box-shadow .15s, border-color .15s;
 }
-.stat-card:hover { border-color: var(--border-light); }
+.stat-card:hover { border-color: var(--accent-mid); box-shadow: var(--shadow-md); }
 .stat-col-name {
-  font-size: .82rem;
-  font-weight: 700;
-  color: var(--accent);
-  margin-bottom: 12px;
-  padding-bottom: 10px;
+  font-size: .8rem; font-weight: 800; color: var(--accent);
+  margin-bottom: 12px; padding-bottom: 10px;
   border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.stat-item { display: flex; flex-direction: column; gap: 2px; }
-.stat-label {
-  font-size: .68rem;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  color: var(--dim);
-  font-weight: 600;
-}
-.stat-value {
-  font-size: .92rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
+.stat-item { display: flex; flex-direction: column; gap: 1px; }
+.stat-label { font-size: .66rem; text-transform: uppercase; letter-spacing: .07em; color: var(--dim); font-weight: 700; }
+.stat-value { font-size: .9rem; font-weight: 800; font-variant-numeric: tabular-nums; }
 .stat-item:nth-child(1) .stat-value { color: var(--blue); }
 .stat-item:nth-child(2) .stat-value { color: var(--green); }
 .stat-item:nth-child(3) .stat-value { color: var(--red); }
 .stat-item:nth-child(4) .stat-value { color: var(--yellow); }
 
-/* ── CHART SECTION ── */
-#chartSection {
-  background: var(--elevated);
+/* ── FILTER SECTION ── */
+#filterSection {
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 22px 24px;
-  margin-bottom: 28px;
+  padding: 18px 20px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow);
 }
-.chart-controls {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
+.filter-builder {
+  display: flex; align-items: flex-start; gap: 12px;
+  flex-wrap: wrap; margin-top: 4px;
 }
-.ctrl-group { display: flex; align-items: center; gap: 8px; }
-.ctrl-label {
-  font-size: .75rem;
-  color: var(--dim);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  white-space: nowrap;
+.filter-value-area {
+  flex: 1; min-width: 220px;
 }
-.ctrl-select {
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  color: var(--text);
-  padding: 7px 32px 7px 12px;
-  border-radius: var(--radius-sm);
-  font-size: .83rem;
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  min-width: 140px;
-  transition: border-color .15s;
-}
-.ctrl-select:focus { outline: none; border-color: var(--accent); }
-
-.type-toggle {
-  display: flex;
-  background: var(--surface);
+.filter-check-wrapper {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  overflow: hidden;
+  background: var(--elevated);
+  max-height: 160px; overflow-y: auto;
+  padding: 8px 10px;
+}
+.filter-check-wrapper::-webkit-scrollbar { width: 4px; }
+.filter-check-wrapper::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 2px; }
+.filter-check-search {
+  width: 100%; margin-bottom: 8px;
+  padding: 5px 10px;
+  border: 1px solid var(--border-md); border-radius: 6px;
+  font-size: .8rem; background: var(--surface); color: var(--text);
+}
+.filter-check-search:focus { outline: none; border-color: var(--accent); }
+.filter-check-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 3px 2px;
+  font-size: .82rem; cursor: pointer;
+  border-radius: 4px;
+}
+.filter-check-item:hover { background: var(--accent-soft); }
+.filter-check-item input[type=checkbox] { accent-color: var(--accent); width: 13px; height: 13px; }
+.filter-range {
+  display: flex; align-items: center; gap: 8px;
+}
+.filter-range input {
+  width: 120px; padding: 7px 10px;
+  border: 1px solid var(--border-md); border-radius: var(--radius-sm);
+  font-size: .83rem; background: var(--surface); color: var(--text);
+}
+.filter-range input:focus { outline: none; border-color: var(--accent); }
+.filter-range span { color: var(--dim); font-size: .85rem; }
+
+.filter-chips {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  margin-top: 12px;
+}
+.filter-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px 3px 12px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-mid);
+  border-radius: 20px;
+  font-size: .78rem; font-weight: 600; color: var(--accent);
+}
+.filter-chip-remove {
+  display: flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  cursor: pointer; background: var(--accent-mid);
+  font-size: 11px; line-height: 1; font-weight: 800;
+  transition: background .1s;
+}
+.filter-chip-remove:hover { background: var(--accent); color: #fff; }
+.filter-active-badge {
+  background: var(--accent); color: #fff;
+  font-size: .7rem; font-weight: 800;
+  padding: 1px 7px; border-radius: 20px;
+}
+.filter-result-info {
+  font-size: .78rem; color: var(--muted);
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+.filter-result-info strong { color: var(--accent); }
+
+/* ── CHART SECTION ── */
+#chartSection {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow);
+}
+.chart-controls {
+  display: flex; gap: 10px; align-items: center;
+  flex-wrap: wrap; margin-bottom: 18px;
+}
+.ctrl-group { display: flex; align-items: center; gap: 7px; }
+.ctrl-label {
+  font-size: .72rem; color: var(--muted); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em; white-space: nowrap;
+}
+.ctrl-select {
+  background: var(--elevated);
+  border: 1px solid var(--border-md);
+  color: var(--text);
+  padding: 7px 30px 7px 11px;
+  border-radius: var(--radius-sm);
+  font-size: .82rem; cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 9px center;
+  min-width: 130px; transition: border-color .15s;
+}
+.ctrl-select:focus { outline: none; border-color: var(--accent); }
+.type-toggle {
+  display: flex;
+  background: var(--elevated);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm); overflow: hidden;
   margin-left: auto;
 }
 .type-btn {
-  padding: 7px 16px;
-  font-size: .82rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  color: var(--dim);
-  transition: all .15s;
-  display: flex; align-items: center; gap: 5px;
+  padding: 6px 14px; font-size: .8rem; font-weight: 700;
+  cursor: pointer; border: none; background: transparent;
+  color: var(--muted); transition: all .15s;
+  display: flex; align-items: center; gap: 4px;
 }
 .type-btn.active { background: var(--accent); color: #fff; }
 .type-btn:not(.active):hover { color: var(--text); }
+.chart-wrapper { position: relative; height: 320px; }
 
-.chart-wrapper { position: relative; height: 340px; }
+/* ── REPORT SECTION ── */
+#reportSection {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow);
+}
+#reportContent {
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  font-family: 'Consolas', 'D2Coding', monospace;
+  font-size: .78rem;
+  line-height: 1.7;
+  color: var(--text);
+  white-space: pre-wrap;
+  max-height: 260px;
+  overflow-y: auto;
+  margin-top: 4px;
+}
+#reportContent::-webkit-scrollbar { width: 4px; }
+#reportContent::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 2px; }
 
 /* ── TABLE SECTION ── */
 #tableSection {
-  background: var(--elevated);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 22px 24px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
 }
-.table-meta { font-size: .78rem; color: var(--dim); margin-bottom: 12px; }
+.table-meta { font-size: .77rem; color: var(--muted); margin-bottom: 10px; }
 .table-scroll {
-  overflow: auto;
-  max-height: 440px;
+  overflow: auto; max-height: 420px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
 }
 .table-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
-.table-scroll::-webkit-scrollbar-track { background: var(--surface); }
-.table-scroll::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+.table-scroll::-webkit-scrollbar-track { background: var(--elevated); }
+.table-scroll::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 3px; }
 
-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+table { width: 100%; border-collapse: collapse; font-size: .81rem; }
 thead th {
   position: sticky; top: 0; z-index: 1;
-  background: var(--surface);
-  padding: 10px 14px;
+  background: var(--elevated);
+  padding: 9px 13px;
   text-align: left;
-  font-weight: 700;
-  font-size: .72rem;
-  text-transform: uppercase;
-  letter-spacing: .05em;
+  font-weight: 700; font-size: .7rem;
+  text-transform: uppercase; letter-spacing: .05em;
   color: var(--muted);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1.5px solid var(--border-md);
   white-space: nowrap;
 }
 thead th.numeric { text-align: right; }
-tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background .08s; }
 tbody tr:last-child { border-bottom: none; }
-tbody tr:hover { background: rgba(99,102,241,.06); }
+tbody tr:hover { background: var(--accent-soft); }
 tbody td {
-  padding: 8px 14px;
-  white-space: nowrap;
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding: 7px 13px;
+  white-space: nowrap; max-width: 200px;
+  overflow: hidden; text-overflow: ellipsis;
 }
 tbody td.numeric {
   text-align: right;
   font-variant-numeric: tabular-nums;
-  color: var(--blue);
+  color: var(--blue); font-weight: 600;
 }
 
 /* ── EMPTY STATE ── */
 .no-stats {
-  padding: 22px;
-  text-align: center;
-  color: var(--dim);
-  font-size: .85rem;
+  padding: 20px; text-align: center;
+  color: var(--muted); font-size: .84rem;
   background: var(--elevated);
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--border-md);
   border-radius: var(--radius);
 }
 
 /* ── TOAST ── */
 #toast {
-  position: fixed; bottom: 28px; left: 50%;
-  transform: translateX(-50%) translateY(16px);
-  background: #ef4444;
-  color: #fff;
-  padding: 9px 22px;
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(14px);
+  padding: 9px 20px;
   border-radius: 8px;
-  font-size: .83rem;
-  font-weight: 600;
-  opacity: 0;
-  transition: all .3s;
-  pointer-events: none;
-  z-index: 100;
+  font-size: .82rem; font-weight: 700;
+  opacity: 0; transition: all .25s;
+  pointer-events: none; z-index: 200;
+  box-shadow: var(--shadow-md);
 }
+#toast.error { background: #fef2f2; color: var(--red); border: 1px solid #fecaca; }
+#toast.success { background: #f0fdf4; color: var(--green); border: 1px solid #bbf7d0; }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 @media (max-width: 640px) {
-  header { padding: 14px 18px; }
-  #resultsSection { padding: 16px 14px 40px; }
-  #uploadSection { padding: 20px 16px; min-height: calc(100vh - 61px); }
+  header { padding: 12px 16px; }
+  #resultsSection { padding: 14px 12px 40px; }
+  #uploadSection { padding: 20px 14px; }
   .chart-controls { flex-direction: column; align-items: stretch; }
   .type-toggle { margin-left: 0; }
 }
@@ -363,7 +458,7 @@ tbody td.numeric {
 <div id="uploadSection">
   <div id="dropzone">
     <div class="dz-icon">
-      <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+      <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
         <polyline points="17 8 12 3 7 8"/>
         <line x1="12" y1="3" x2="12" y2="15"/>
@@ -371,7 +466,7 @@ tbody td.numeric {
     </div>
     <h2>CSV 파일을 드래그하여 업로드</h2>
     <p>또는 클릭하여 파일을 선택하세요</p>
-    <p class="dz-sub">UTF-8 · EUC-KR 인코딩 지원 · .csv 파일</p>
+    <p class="dz-sub">UTF-8 · EUC-KR 인코딩 지원</p>
     <div class="dz-btn">파일 선택</div>
     <input type="file" id="fileInput" accept=".csv,.tsv,.txt" hidden>
   </div>
@@ -379,21 +474,61 @@ tbody td.numeric {
 
 <!-- ── RESULTS ── -->
 <div id="resultsSection">
+
+  <!-- Top bar -->
   <div class="results-topbar">
     <div class="file-info">
       <span class="file-badge" id="fileName"></span>
       <span class="file-stats" id="fileStats"></span>
     </div>
-    <button class="btn-reset" id="resetBtn">↩ 새 파일 업로드</button>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" id="resetBtn">↩ 새 파일</button>
+    </div>
   </div>
 
+  <!-- Stats Cards -->
   <div id="statsSection">
-    <div class="section-title">수치 통계</div>
+    <div class="section-header">
+      <div class="section-title">수치 통계</div>
+    </div>
     <div id="statsCards"></div>
   </div>
 
+  <!-- Filter Section -->
+  <div id="filterSection">
+    <div class="section-header">
+      <div class="section-title">필터</div>
+      <span id="filterActiveBadge" class="filter-active-badge" style="display:none"></span>
+      <div class="section-spacer"></div>
+      <button class="btn-text-danger" id="filterClearAll" style="display:none">전체 초기화</button>
+    </div>
+    <div class="filter-builder">
+      <div class="ctrl-group">
+        <span class="ctrl-label">컬럼</span>
+        <select id="filterColSel" class="ctrl-select">
+          <option value="">-- 컬럼 선택 --</option>
+        </select>
+      </div>
+      <div id="filterValueArea" class="filter-value-area"></div>
+    </div>
+    <div id="filterChips" class="filter-chips"></div>
+    <div id="filterResultInfo" class="filter-result-info" style="display:none"></div>
+  </div>
+
+  <!-- Chart Section -->
   <div id="chartSection">
-    <div class="section-title">데이터 시각화</div>
+    <div class="section-header">
+      <div class="section-title">데이터 시각화</div>
+      <div class="section-spacer"></div>
+      <button class="btn btn-ghost btn-sm" id="downloadChartBtn">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        PNG 저장
+      </button>
+    </div>
     <div class="chart-controls">
       <div class="ctrl-group">
         <span class="ctrl-label">X축</span>
@@ -405,13 +540,13 @@ tbody td.numeric {
       </div>
       <div class="type-toggle">
         <button class="type-btn active" id="barBtn">
-          <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+          <svg width="11" height="11" fill="currentColor" viewBox="0 0 16 16">
             <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z"/>
           </svg>
           막대
         </button>
         <button class="type-btn" id="lineBtn">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
           </svg>
           꺾은선
@@ -423,43 +558,70 @@ tbody td.numeric {
     </div>
   </div>
 
+  <!-- Report Section -->
+  <div id="reportSection">
+    <div class="section-header">
+      <div class="section-title">분석 리포트</div>
+      <div class="section-spacer"></div>
+      <button class="btn btn-green btn-sm" id="copyReportBtn">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        복사
+      </button>
+    </div>
+    <pre id="reportContent"></pre>
+  </div>
+
+  <!-- Table Section -->
   <div id="tableSection">
-    <div class="section-title">데이터 테이블</div>
-    <div class="table-meta" id="tableMeta"></div>
+    <div class="section-header">
+      <div class="section-title">데이터 테이블</div>
+      <div class="section-spacer"></div>
+      <span class="table-meta" id="tableMeta"></span>
+    </div>
     <div class="table-scroll">
       <table id="dataTable"></table>
     </div>
   </div>
+
 </div>
 
 <div id="toast"></div>
 
 <script>
-// ── STATE ──
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
 let state = { headers: [], rows: [], numericCols: [], fileName: '' };
+let activeFilters = {};   // { colIdx: { type:'cat'|'num', allowed:Set|null, min:num|null, max:num|null } }
 let chartInstance = null;
 let currentChartType = 'bar';
 
 const CHART_COLORS = [
-  '#818cf8','#34d399','#fbbf24','#f87171','#38bdf8',
-  '#a78bfa','#fb923c','#4ade80','#e879f9','#22d3ee'
+  '#6366f1','#10b981','#f59e0b','#ef4444','#3b82f6',
+  '#8b5cf6','#f97316','#14b8a6','#ec4899','#06b6d4'
 ];
 
-// ── DRAG & DROP ──
-const dropzone      = document.getElementById('dropzone');
-const fileInput     = document.getElementById('fileInput');
-const uploadSection = document.getElementById('uploadSection');
-const resultsSection= document.getElementById('resultsSection');
+// ─────────────────────────────────────────────
+// ELEMENTS
+// ─────────────────────────────────────────────
+const dropzone       = document.getElementById('dropzone');
+const fileInput      = document.getElementById('fileInput');
+const uploadSection  = document.getElementById('uploadSection');
+const resultsSection = document.getElementById('resultsSection');
 
+// ─────────────────────────────────────────────
+// UPLOAD / DRAG & DROP
+// ─────────────────────────────────────────────
 dropzone.addEventListener('click', () => fileInput.click());
 dropzone.addEventListener('dragover',  e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
 dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
 dropzone.addEventListener('dragend',   () => dropzone.classList.remove('drag-over'));
 dropzone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropzone.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) processFile(file);
+  e.preventDefault(); dropzone.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]);
 });
 fileInput.addEventListener('change', e => {
   if (e.target.files[0]) processFile(e.target.files[0]);
@@ -470,98 +632,103 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   resultsSection.style.display = 'none';
   if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
   state = { headers: [], rows: [], numericCols: [], fileName: '' };
+  activeFilters = {};
 });
 
-// ── FILE DECODE ──
+// ─────────────────────────────────────────────
+// FILE DECODE
+// ─────────────────────────────────────────────
 function processFile(file) {
   const reader = new FileReader();
   reader.onload = e => {
-    const buf = e.target.result;
     state.fileName = file.name;
-    analyzeCSV(decodeBuffer(buf));
+    analyzeCSV(decodeBuffer(e.target.result));
   };
   reader.readAsArrayBuffer(file);
 }
 
 function decodeBuffer(buf) {
-  // Try UTF-8 first (strip BOM if present)
   const utf8 = new TextDecoder('utf-8', { fatal: false }).decode(buf);
   const clean = utf8.charCodeAt(0) === 0xFEFF ? utf8.slice(1) : utf8;
   if (!clean.includes('\uFFFD')) return clean;
-  // Fallback: EUC-KR (common for Korean legacy files)
   try { return new TextDecoder('euc-kr').decode(buf); } catch { return clean; }
 }
 
-// ── CSV PARSING ──
+// ─────────────────────────────────────────────
+// CSV PARSING
+// ─────────────────────────────────────────────
 function detectDelimiter(line) {
-  const candidates = { ',': 0, ';': 0, '\t': 0 };
+  const c = { ',': 0, ';': 0, '\t': 0 };
   let inQ = false;
-  for (const c of line) {
-    if (c === '"') inQ = !inQ;
-    else if (!inQ && c in candidates) candidates[c]++;
+  for (const ch of line) {
+    if (ch === '"') inQ = !inQ;
+    else if (!inQ && ch in c) c[ch]++;
   }
-  return Object.entries(candidates).sort((a, b) => b[1] - a[1])[0][0];
+  return Object.entries(c).sort((a, b) => b[1] - a[1])[0][0];
 }
 
 function splitLine(line, delim) {
-  const fields = [];
-  let field = '', inQ = false;
+  const fields = []; let field = '', inQ = false;
   for (let i = 0; i < line.length; i++) {
-    const c = line[i];
-    if (c === '"') {
-      if (inQ && line[i + 1] === '"') { field += '"'; i++; }
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQ && line[i+1] === '"') { field += '"'; i++; }
       else inQ = !inQ;
-    } else if (c === delim && !inQ) {
-      fields.push(field.trim());
-      field = '';
-    } else {
-      field += c;
-    }
+    } else if (ch === delim && !inQ) { fields.push(field.trim()); field = ''; }
+    else field += ch;
   }
   fields.push(field.trim());
   return fields;
 }
 
 function parseCSV(text) {
-  // Split into logical lines (respecting quoted newlines)
-  const rawLines = [];
-  let cur = '', inQ = false;
+  const rawLines = []; let cur = '', inQ = false;
   for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (c === '"') inQ = !inQ;
-    if (c === '\n' && !inQ) {
-      rawLines.push(cur.replace(/\r$/, ''));
-      cur = '';
-    } else {
-      cur += c;
-    }
+    const ch = text[i];
+    if (ch === '"') inQ = !inQ;
+    if (ch === '\n' && !inQ) { rawLines.push(cur.replace(/\r$/, '')); cur = ''; }
+    else cur += ch;
   }
   if (cur.trim()) rawLines.push(cur.replace(/\r$/, ''));
 
   const lines = rawLines.filter(l => l.trim());
-  if (lines.length === 0) return { headers: [], rows: [] };
-
+  if (!lines.length) return { headers: [], rows: [] };
   const delim = detectDelimiter(lines[0]);
   const all = lines.map(l => splitLine(l, delim));
   return { headers: all[0], rows: all.slice(1) };
 }
 
-// ── ANALYZE ──
-function isNumeric(v) {
-  return v !== '' && !isNaN(Number(String(v).replace(/,/g, '')));
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function isNumeric(v) { return v !== '' && !isNaN(Number(String(v).replace(/,/g,''))); }
+function toNum(v)     { return parseFloat(String(v).replace(/,/g,'')); }
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function toNum(v) {
-  return parseFloat(String(v).replace(/,/g, ''));
+function fmt(n) {
+  if (!isFinite(n)) return '—';
+  const abs = Math.abs(n);
+  if (abs >= 1e9)  return (n/1e9).toFixed(2)+'B';
+  if (abs >= 1e6)  return (n/1e6).toFixed(2)+'M';
+  if (abs >= 1e4)  return n.toLocaleString('ko-KR',{maximumFractionDigits:0});
+  if (Number.isInteger(n)) return n.toLocaleString('ko-KR');
+  return n.toLocaleString('ko-KR',{maximumFractionDigits:3});
+}
+function fmtFull(n) {
+  if (!isFinite(n)) return '—';
+  if (Number.isInteger(n)) return n.toLocaleString('ko-KR');
+  return n.toLocaleString('ko-KR',{maximumFractionDigits:4});
 }
 
+// ─────────────────────────────────────────────
+// ANALYZE
+// ─────────────────────────────────────────────
 function analyzeCSV(text) {
   const { headers, rows } = parseCSV(text);
-  if (!headers.length || !rows.length) {
-    showToast('파싱 오류: CSV 형식을 확인하세요.');
-    return;
-  }
+  if (!headers.length || !rows.length) { showToast('파싱 오류: CSV 형식을 확인하세요.','error'); return; }
 
-  // Detect numeric columns: >60% of non-empty values parseable as numbers
   const numericCols = headers.map((_, ci) => {
     const vals = rows.map(r => r[ci]).filter(v => v !== undefined && v !== '');
     if (!vals.length) return false;
@@ -569,117 +736,303 @@ function analyzeCSV(text) {
   });
 
   state = { headers, rows, numericCols, fileName: state.fileName };
-  renderResults();
+  activeFilters = {};
+  renderAll();
 }
 
-// ── RENDER RESULTS ──
-function renderResults() {
+// ─────────────────────────────────────────────
+// FILTER
+// ─────────────────────────────────────────────
+function getFilteredRows() {
+  const { rows, numericCols } = state;
+  const entries = Object.entries(activeFilters);
+  if (!entries.length) return rows;
+  return rows.filter(row => {
+    for (const [ci, f] of entries) {
+      const idx = parseInt(ci);
+      const val = row[idx] ?? '';
+      if (f.type === 'cat') {
+        if (f.allowed !== null && !f.allowed.has(val)) return false;
+      } else {
+        if (val === '') continue;
+        const n = toNum(val);
+        if (f.min !== null && n < f.min) return false;
+        if (f.max !== null && n > f.max) return false;
+      }
+    }
+    return true;
+  });
+}
+
+function setupFilterUI() {
+  const { headers, numericCols } = state;
+  const sel = document.getElementById('filterColSel');
+  sel.innerHTML = '<option value="">-- 컬럼 선택 --</option>';
+  headers.forEach((h, i) => sel.add(new Option(h, i)));
+
+  sel.onchange = () => {
+    const ci = parseInt(sel.value);
+    const area = document.getElementById('filterValueArea');
+    area.innerHTML = '';
+    if (isNaN(ci)) return;
+    if (numericCols[ci]) renderNumericFilter(ci, area);
+    else renderCatFilter(ci, area);
+  };
+}
+
+function renderCatFilter(ci, area) {
+  const { rows } = state;
+  const uniqueVals = [...new Set(rows.map(r => r[ci] ?? ''))].sort();
+  const currentFilter = activeFilters[ci];
+  const allowed = currentFilter ? currentFilter.allowed : null;
+
+  const MAX_SHOW = 100;
+  area.innerHTML = `
+    <div class="filter-check-wrapper">
+      ${uniqueVals.length > 10 ? '<input class="filter-check-search" placeholder="검색..." id="filterCheckSearch">' : ''}
+      <div id="filterCheckList"></div>
+    </div>`;
+
+  const renderList = (search = '') => {
+    const list = document.getElementById('filterCheckList');
+    const filtered = uniqueVals.filter(v => !search || v.toLowerCase().includes(search.toLowerCase()));
+    list.innerHTML = filtered.slice(0, MAX_SHOW).map(v => {
+      const checked = !allowed || allowed.has(v) ? 'checked' : '';
+      return `<label class="filter-check-item">
+        <input type="checkbox" value="${esc(v)}" ${checked} data-ci="${ci}">
+        <span>${esc(v) || '<em style="color:var(--dim)">빈 값</em>'}</span>
+      </label>`;
+    }).join('');
+    if (filtered.length > MAX_SHOW) {
+      list.innerHTML += `<div style="font-size:.72rem;color:var(--dim);padding:4px 2px">... ${filtered.length - MAX_SHOW}개 더 있음</div>`;
+    }
+    list.querySelectorAll('input[type=checkbox]').forEach(cb => {
+      cb.onchange = () => applyCatFilter(ci);
+    });
+  };
+
+  renderList();
+  const searchEl = document.getElementById('filterCheckSearch');
+  if (searchEl) searchEl.addEventListener('input', e => renderList(e.target.value));
+}
+
+function applyCatFilter(ci) {
+  const checkboxes = document.querySelectorAll(`#filterCheckList input[data-ci="${ci}"]`);
+  const allVals = [...new Set(state.rows.map(r => r[ci] ?? ''))];
+  const checkedVals = new Set([...checkboxes].filter(c => c.checked).map(c => c.value));
+
+  if (checkedVals.size === allVals.length) {
+    delete activeFilters[ci]; // all selected = no filter
+  } else {
+    activeFilters[ci] = { type: 'cat', allowed: checkedVals };
+  }
+  onFiltersChanged();
+}
+
+function renderNumericFilter(ci, area) {
+  const { rows } = state;
+  const vals = rows.map(r => r[ci]).filter(v => v && isNumeric(v)).map(toNum);
+  const dataMin = Math.min(...vals);
+  const dataMax = Math.max(...vals);
+  const cur = activeFilters[ci];
+
+  area.innerHTML = `
+    <div class="filter-range">
+      <input type="number" id="filterMin" placeholder="최소 (${fmt(dataMin)})"
+        value="${cur?.min ?? ''}" step="any">
+      <span>~</span>
+      <input type="number" id="filterMax" placeholder="최대 (${fmt(dataMax)})"
+        value="${cur?.max ?? ''}" step="any">
+    </div>`;
+
+  let debounce;
+  const apply = () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => applyNumFilter(ci), 350);
+  };
+  document.getElementById('filterMin').addEventListener('input', apply);
+  document.getElementById('filterMax').addEventListener('input', apply);
+}
+
+function applyNumFilter(ci) {
+  const minEl = document.getElementById('filterMin');
+  const maxEl = document.getElementById('filterMax');
+  if (!minEl) return;
+  const minVal = minEl.value === '' ? null : parseFloat(minEl.value);
+  const maxVal = maxEl.value === '' ? null : parseFloat(maxEl.value);
+  if (minVal === null && maxVal === null) {
+    delete activeFilters[ci];
+  } else {
+    activeFilters[ci] = { type: 'num', min: minVal, max: maxVal };
+  }
+  onFiltersChanged();
+}
+
+function onFiltersChanged() {
+  renderFilterChips();
+  renderFilterResultInfo();
+  renderStats();
+  renderChart();
+  renderTable();
+  generateReport();
+}
+
+function renderFilterChips() {
+  const { headers, numericCols } = state;
+  const chips = document.getElementById('filterChips');
+  const badge = document.getElementById('filterActiveBadge');
+  const clearAll = document.getElementById('filterClearAll');
+  const count = Object.keys(activeFilters).length;
+
+  chips.innerHTML = '';
+  if (!count) {
+    badge.style.display = 'none';
+    clearAll.style.display = 'none';
+    return;
+  }
+  badge.style.display = '';
+  badge.textContent = `${count}개 적용`;
+  clearAll.style.display = '';
+
+  for (const [ci, f] of Object.entries(activeFilters)) {
+    const idx = parseInt(ci);
+    let summary = '';
+    if (f.type === 'cat') {
+      const vals = [...f.allowed];
+      summary = vals.length <= 3
+        ? vals.map(v => v || '빈 값').join(', ')
+        : `${vals.slice(0,2).join(', ')} 외 ${vals.length-2}개`;
+    } else {
+      const parts = [];
+      if (f.min !== null) parts.push(`≥ ${fmt(f.min)}`);
+      if (f.max !== null) parts.push(`≤ ${fmt(f.max)}`);
+      summary = parts.join(' · ');
+    }
+    const chip = document.createElement('div');
+    chip.className = 'filter-chip';
+    chip.innerHTML = `<span>${esc(headers[idx])}: ${esc(summary)}</span>
+      <span class="filter-chip-remove" data-ci="${idx}">×</span>`;
+    chip.querySelector('.filter-chip-remove').onclick = () => {
+      delete activeFilters[idx];
+      // Reset col select if current col matches
+      const sel = document.getElementById('filterColSel');
+      if (parseInt(sel.value) === idx) {
+        sel.value = '';
+        document.getElementById('filterValueArea').innerHTML = '';
+      }
+      onFiltersChanged();
+    };
+    chips.appendChild(chip);
+  }
+}
+
+function renderFilterResultInfo() {
+  const info = document.getElementById('filterResultInfo');
+  const count = Object.keys(activeFilters).length;
+  if (!count) { info.style.display = 'none'; return; }
+  const filtered = getFilteredRows();
+  info.style.display = '';
+  info.innerHTML = `필터 결과: <strong>${filtered.length.toLocaleString()}행</strong> / 전체 ${state.rows.length.toLocaleString()}행`;
+}
+
+document.getElementById('filterClearAll').addEventListener('click', () => {
+  activeFilters = {};
+  document.getElementById('filterColSel').value = '';
+  document.getElementById('filterValueArea').innerHTML = '';
+  onFiltersChanged();
+});
+
+// ─────────────────────────────────────────────
+// RENDER ALL
+// ─────────────────────────────────────────────
+function renderAll() {
   uploadSection.style.display = 'none';
   resultsSection.style.display = 'block';
   document.getElementById('fileName').textContent = state.fileName;
   document.getElementById('fileStats').textContent =
     `${state.rows.length.toLocaleString()}행 · ${state.headers.length}열`;
   renderStats();
+  setupFilterUI();
+  renderFilterChips();
   setupChart();
+  generateReport();
   renderTable();
 }
 
-// ── STATS CARDS ──
+// ─────────────────────────────────────────────
+// STATS (uses filtered rows)
+// ─────────────────────────────────────────────
 function renderStats() {
-  const { headers, rows, numericCols } = state;
+  const { headers, numericCols } = state;
+  const rows = getFilteredRows();
   const container = document.getElementById('statsCards');
   container.innerHTML = '';
 
-  const hasNumeric = numericCols.some(Boolean);
-  if (!hasNumeric) {
+  if (!numericCols.some(Boolean)) {
     container.innerHTML = '<div class="no-stats">수치형 컬럼이 감지되지 않았습니다.</div>';
     return;
   }
-
   headers.forEach((header, ci) => {
     if (!numericCols[ci]) return;
     const vals = rows.map(r => r[ci]).filter(v => v && isNumeric(v)).map(toNum);
     if (!vals.length) return;
-
-    const sum = vals.reduce((a, b) => a + b, 0);
+    const sum = vals.reduce((a,b) => a+b, 0);
     const avg = sum / vals.length;
     const max = Math.max(...vals);
     const min = Math.min(...vals);
-
     const card = document.createElement('div');
     card.className = 'stat-card';
     card.innerHTML = `
       <div class="stat-col-name" title="${esc(header)}">${esc(header)}</div>
       <div class="stat-grid">
-        <div class="stat-item">
-          <span class="stat-label">평균</span>
-          <span class="stat-value">${fmt(avg)}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">최대</span>
-          <span class="stat-value">${fmt(max)}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">최소</span>
-          <span class="stat-value">${fmt(min)}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">합계</span>
-          <span class="stat-value">${fmt(sum)}</span>
-        </div>
+        <div class="stat-item"><span class="stat-label">평균</span><span class="stat-value">${fmt(avg)}</span></div>
+        <div class="stat-item"><span class="stat-label">최대</span><span class="stat-value">${fmt(max)}</span></div>
+        <div class="stat-item"><span class="stat-label">최소</span><span class="stat-value">${fmt(min)}</span></div>
+        <div class="stat-item"><span class="stat-label">합계</span><span class="stat-value">${fmt(sum)}</span></div>
       </div>`;
     container.appendChild(card);
   });
 }
 
-function fmt(n) {
-  if (!isFinite(n)) return '—';
-  const abs = Math.abs(n);
-  if (abs >= 1e9) return (n / 1e9).toFixed(2) + 'B';
-  if (abs >= 1e6) return (n / 1e6).toFixed(2) + 'M';
-  if (abs >= 1e4) return n.toLocaleString('ko-KR', { maximumFractionDigits: 0 });
-  if (Number.isInteger(n)) return n.toLocaleString('ko-KR');
-  return n.toLocaleString('ko-KR', { maximumFractionDigits: 3 });
-}
-
-function esc(s) {
-  return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ── CHART ──
+// ─────────────────────────────────────────────
+// CHART
+// ─────────────────────────────────────────────
 function setupChart() {
   const { headers, numericCols } = state;
   const xSel = document.getElementById('xAxisSelect');
   const ySel = document.getElementById('yAxisSelect');
-  xSel.innerHTML = '';
-  ySel.innerHTML = '';
-
+  xSel.innerHTML = ''; ySel.innerHTML = '';
   headers.forEach((h, i) => xSel.add(new Option(h, i)));
   headers.forEach((h, i) => { if (numericCols[i]) ySel.add(new Option(h, i)); });
 
-  // Sensible defaults: X = first non-numeric col (or col 0), Y = first numeric col
   const firstNonNum = numericCols.findIndex(v => !v);
   xSel.value = firstNonNum >= 0 ? firstNonNum : 0;
-  if (ySel.options.length > 0) ySel.value = ySel.options[0].value;
+  if (ySel.options.length) ySel.value = ySel.options[0].value;
 
   xSel.onchange = renderChart;
   ySel.onchange = renderChart;
 
-  // Chart type buttons (remove old listeners by cloning)
-  const barBtn  = document.getElementById('barBtn');
-  const lineBtn = document.getElementById('lineBtn');
-  const newBar  = barBtn.cloneNode(true);
-  const newLine = lineBtn.cloneNode(true);
-  barBtn.replaceWith(newBar);
-  lineBtn.replaceWith(newLine);
-  newBar.addEventListener('click',  () => setChartType('bar'));
-  newLine.addEventListener('click', () => setChartType('line'));
-  // Reset active state
-  newBar.classList.add('active');
-  newLine.classList.remove('active');
+  // Chart type buttons
+  ['barBtn','lineBtn'].forEach(id => {
+    const el = document.getElementById(id);
+    const fresh = el.cloneNode(true);
+    el.replaceWith(fresh);
+  });
+  document.getElementById('barBtn').addEventListener('click',  () => setChartType('bar'));
+  document.getElementById('lineBtn').addEventListener('click', () => setChartType('line'));
+  document.getElementById('barBtn').classList.add('active');
+  document.getElementById('lineBtn').classList.remove('active');
   currentChartType = 'bar';
+
+  // PNG download
+  document.getElementById('downloadChartBtn').onclick = () => {
+    if (!chartInstance) return;
+    const a = document.createElement('a');
+    a.download = `chart_${Date.now()}.png`;
+    a.href = chartInstance.toBase64Image('image/png', 1);
+    a.click();
+    showToast('차트가 PNG로 저장됐습니다.', 'success');
+  };
 
   renderChart();
 }
@@ -696,31 +1049,28 @@ function renderChart() {
   const yIdx = parseInt(document.getElementById('yAxisSelect').value);
   if (isNaN(xIdx) || isNaN(yIdx)) return;
 
-  const { rows, headers } = state;
+  const filtered = getFilteredRows();
   const MAX_CHART = 120;
-  const display = rows.slice(0, MAX_CHART);
-
-  const labels = display.map(r => r[xIdx] ?? '');
-  const data   = display.map(r => {
+  const display = filtered.slice(0, MAX_CHART);
+  const labels  = display.map(r => r[xIdx] ?? '');
+  const data    = display.map(r => {
     const v = r[yIdx];
     return (v !== undefined && isNumeric(v)) ? toNum(v) : null;
   });
-
   const color = CHART_COLORS[yIdx % CHART_COLORS.length];
 
   if (chartInstance) chartInstance.destroy();
-
   const ctx = document.getElementById('myChart').getContext('2d');
   chartInstance = new Chart(ctx, {
     type: currentChartType,
     data: {
       labels,
       datasets: [{
-        label: headers[yIdx],
+        label: state.headers[yIdx],
         data,
-        backgroundColor: currentChartType === 'bar' ? color + 'aa' : color + '18',
+        backgroundColor: currentChartType === 'bar' ? color + 'bb' : color + '20',
         borderColor: color,
-        borderWidth: currentChartType === 'bar' ? 1 : 2,
+        borderWidth: currentChartType === 'bar' ? 1.5 : 2,
         borderRadius: currentChartType === 'bar' ? 4 : 0,
         pointBackgroundColor: color,
         pointRadius: data.length > 60 ? 2 : 4,
@@ -730,54 +1080,135 @@ function renderChart() {
       }]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: { duration: 300 },
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 250 },
       plugins: {
-        legend: { labels: { color: '#94a3b8', font: { size: 12 } } },
+        legend: { labels: { color: '#64748b', font: { size: 12 } } },
         tooltip: {
-          backgroundColor: '#1a1a2e',
-          borderColor: '#252538',
-          borderWidth: 1,
-          titleColor: '#f1f5f9',
-          bodyColor: '#94a3b8',
-          padding: 10,
-          callbacks: {
-            label: ctx => ` ${fmt(ctx.parsed.y)}`
-          }
+          backgroundColor: '#ffffff',
+          borderColor: '#e2e8f0', borderWidth: 1,
+          titleColor: '#1e293b', bodyColor: '#64748b',
+          padding: 10, boxShadow: '0 4px 12px rgba(0,0,0,.1)',
+          callbacks: { label: c => ` ${fmtFull(c.parsed.y)}` }
         }
       },
       scales: {
         x: {
-          ticks: { color: '#64748b', maxTicksLimit: 16, maxRotation: 45, font: { size: 11 } },
-          grid:  { color: 'rgba(255,255,255,0.04)' }
+          ticks: { color: '#94a3b8', maxTicksLimit: 16, maxRotation: 45, font: { size: 11 } },
+          grid: { color: 'rgba(0,0,0,0.05)' }
         },
         y: {
-          ticks: { color: '#64748b', font: { size: 11 }, callback: v => fmt(v) },
-          grid:  { color: 'rgba(255,255,255,0.06)' }
+          ticks: { color: '#94a3b8', font: { size: 11 }, callback: v => fmt(v) },
+          grid: { color: 'rgba(0,0,0,0.07)' }
         }
       }
     }
   });
 }
 
-// ── TABLE ──
+// ─────────────────────────────────────────────
+// REPORT
+// ─────────────────────────────────────────────
+function generateReport() {
+  const { headers, numericCols, fileName, rows } = state;
+  const filtered = getFilteredRows();
+  const now = new Date().toLocaleString('ko-KR');
+  const filterCount = Object.keys(activeFilters).length;
+
+  const lines = [
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    '  📊 CSV 분석 리포트',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    `  파일명    : ${fileName}`,
+    `  분석 일시 : ${now}`,
+    `  전체 행   : ${rows.length.toLocaleString()}행  |  컬럼 수: ${headers.length}개`,
+    filterCount > 0
+      ? `  필터 적용 : ${filterCount}개 조건  →  ${filtered.length.toLocaleString()}행 해당`
+      : `  필터      : 없음`,
+    '',
+    '[ 수치형 컬럼 통계 ]',
+    '─────────────────────────────────────',
+  ];
+
+  const statsRows = filtered;
+  const numHeaders = headers.filter((_, i) => numericCols[i]);
+  if (!numHeaders.length) {
+    lines.push('  수치형 컬럼 없음');
+  } else {
+    headers.forEach((header, ci) => {
+      if (!numericCols[ci]) return;
+      const vals = statsRows.map(r => r[ci]).filter(v => v && isNumeric(v)).map(toNum);
+      if (!vals.length) return;
+      const sum = vals.reduce((a,b) => a+b, 0);
+      const avg = sum / vals.length;
+      const max = Math.max(...vals);
+      const min = Math.min(...vals);
+      const pad = (s, n) => String(s).padStart(n);
+      lines.push(`  ▸ ${header}`);
+      lines.push(`    평균: ${pad(fmtFull(avg), 18)}   최대: ${pad(fmtFull(max), 18)}`);
+      lines.push(`    최소: ${pad(fmtFull(min), 18)}   합계: ${pad(fmtFull(sum), 18)}`);
+      lines.push(`    행 수: ${vals.length.toLocaleString()}`);
+      lines.push('');
+    });
+  }
+
+  lines.push('[ 컬럼 목록 ]');
+  lines.push('─────────────────────────────────────');
+  headers.forEach((h, i) => {
+    const type = numericCols[i] ? '수치형' : '텍스트';
+    const uniqueCount = new Set(rows.map(r => r[i] ?? '')).size;
+    lines.push(`  ${String(i+1).padStart(2)}. ${h}  (${type}, 고유값 ${uniqueCount.toLocaleString()}개)`);
+  });
+
+  if (filterCount > 0) {
+    lines.push('');
+    lines.push('[ 적용된 필터 ]');
+    lines.push('─────────────────────────────────────');
+    for (const [ci, f] of Object.entries(activeFilters)) {
+      const idx = parseInt(ci);
+      if (f.type === 'cat') {
+        lines.push(`  ▸ ${headers[idx]}: ${[...f.allowed].join(', ')}`);
+      } else {
+        const parts = [];
+        if (f.min !== null) parts.push(`최소 ${fmtFull(f.min)}`);
+        if (f.max !== null) parts.push(`최대 ${fmtFull(f.max)}`);
+        lines.push(`  ▸ ${headers[idx]}: ${parts.join(' ~ ')}`);
+      }
+    }
+  }
+
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+  document.getElementById('reportContent').textContent = lines.join('\n');
+}
+
+document.getElementById('copyReportBtn').addEventListener('click', () => {
+  const text = document.getElementById('reportContent').textContent;
+  navigator.clipboard.writeText(text).then(
+    () => showToast('리포트가 클립보드에 복사됐습니다.', 'success'),
+    () => showToast('복사에 실패했습니다. 직접 선택하여 복사하세요.', 'error')
+  );
+});
+
+// ─────────────────────────────────────────────
+// TABLE (uses filtered rows)
+// ─────────────────────────────────────────────
 function renderTable() {
-  const { headers, rows, numericCols } = state;
+  const { headers, numericCols } = state;
+  const rows = getFilteredRows();
   const MAX_ROWS = 500;
-  const display  = rows.slice(0, MAX_ROWS);
+  const display = rows.slice(0, MAX_ROWS);
 
   document.getElementById('tableMeta').textContent =
     rows.length > MAX_ROWS
-      ? `상위 ${MAX_ROWS.toLocaleString()}행 표시 중 (전체 ${rows.length.toLocaleString()}행)`
-      : `전체 ${rows.length.toLocaleString()}행`;
+      ? `상위 ${MAX_ROWS.toLocaleString()}행 표시 (전체 ${rows.length.toLocaleString()}행)`
+      : `${rows.length.toLocaleString()}행`;
 
   const table = document.getElementById('dataTable');
   table.innerHTML = '';
 
-  // Head
   const thead = table.createTHead();
-  const hRow  = thead.insertRow();
+  const hRow = thead.insertRow();
   headers.forEach((h, i) => {
     const th = document.createElement('th');
     th.textContent = h;
@@ -785,26 +1216,27 @@ function renderTable() {
     hRow.appendChild(th);
   });
 
-  // Body
   const tbody = table.createTBody();
   display.forEach(row => {
     const tr = tbody.insertRow();
     headers.forEach((_, i) => {
       const td = tr.insertCell();
       const val = row[i] ?? '';
-      td.textContent = val;
-      td.title = val;
+      td.textContent = val; td.title = val;
       if (numericCols[i] && isNumeric(val)) td.classList.add('numeric');
     });
   });
 }
 
-// ── TOAST ──
-function showToast(msg) {
+// ─────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────
+function showToast(msg, type = 'error') {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
+  t.className = `${type} show`;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3200);
 }
 </script>
 </body>
